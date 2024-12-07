@@ -115,7 +115,7 @@ const sendToOllama = async (text) => {
 async function readFileAsync(readDir) {
   try {
     const data = await fsPromise.readFile(readDir, "utf8"); // Properly passing the encoding
-    // console.log(data);
+    console.log(data);
     return data;
   } catch (err) {
     console.error('Error reading file:', err);
