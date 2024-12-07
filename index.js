@@ -85,18 +85,20 @@ const sendToOllama = async (text) => {
     );
 
     let fullResponse = "";
+    let count = 0;
     response.data.on("data", (chunk) => {
-      console.log("Receiving Stream Data...");
+      console.log(`Receiving Stream Data... ${count++}`);
       fullResponse += chunk.toString().split(",")[2].split(":")[1]; // Concatenate the chunk to the full response
+    });
+
+    response.data.on("end", async () => {
+      console.log("Stream finished.");
+
       fullResponse = fullResponse.replace('"', "");
       fullResponse = fullResponse.replace("undefined", "");
       fullResponse = fullResponse.replace("\n\n", "");
       fullResponse = fullResponse.replace('""', "");
       fullResponse = fullResponse.replace("\n", "");
-    });
-
-    response.data.on("end", async () => {
-      console.log("Stream finished.");
 
       const htmlFormat = Buffer.from(
         await sendToGroq(fullResponse + " make the format to be html"),
