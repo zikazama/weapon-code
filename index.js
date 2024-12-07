@@ -17,7 +17,7 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const supportedFormats = [".txt", ".md", ".json", ".js", ".ts"];
 
 // Function to recursively read all files in a directory
-const readFilesRecursively = (dir) => {
+const readFilesRecursively = (dir, skipFolders = ["node_modules", ".git", "dist"]) => {
   let textData = "";
   const files = fs.readdirSync(dir);
 
@@ -26,8 +26,11 @@ const readFilesRecursively = (dir) => {
     const stat = fs.statSync(filePath);
 
     if (stat.isDirectory()) {
+      // Skip directories in the skipFolders list
+      if (skipFolders.includes(file)) continue;
+
       // Recurse into subdirectories
-      textData += readFilesRecursively(filePath);
+      textData += readFilesRecursively(filePath, skipFolders);
     } else if (supportedFormats.includes(path.extname(file))) {
       // Read text data if the file format is supported
       textData += fs.readFileSync(filePath, "utf-8") + "\n";
