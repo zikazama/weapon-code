@@ -17,7 +17,10 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const supportedFormats = [".txt", ".md", ".json", ".js", ".ts"];
 
 // Function to recursively read all files in a directory
-const readFilesRecursively = (dir, skipFolders = ["node_modules", ".git", "dist"]) => {
+const readFilesRecursively = (
+  dir,
+  skipFolders = ["node_modules", ".git", "dist"]
+) => {
   let textData = "";
   const files = fs.readdirSync(dir);
 
@@ -42,6 +45,7 @@ const readFilesRecursively = (dir, skipFolders = ["node_modules", ".git", "dist"
 
 // Function to send text data to Groq AI
 const sendToGroq = async (text) => {
+  console.log("Sending to Groq AI...");
   try {
     const completion = await groq.chat.completions.create({
       messages: [
@@ -65,6 +69,7 @@ const sendToGroq = async (text) => {
 
 // Function to send text data to Ollama local
 const sendToOllama = async (text) => {
+  console.log("Sending Ollama...");
   const ollamaUrl = `${process.env.OLLAMA_HOST}/api/generate`; // Adjust the URL if necessary
   try {
     const response = await axios.post(
@@ -81,6 +86,7 @@ const sendToOllama = async (text) => {
 
     let fullResponse = "";
     response.data.on("data", (chunk) => {
+      console.log("Receiving Stream Data...");
       fullResponse += chunk.toString().split(",")[2].split(":")[1]; // Concatenate the chunk to the full response
       fullResponse = fullResponse.replace('"', "");
       fullResponse = fullResponse.replace("undefined", "");
@@ -121,7 +127,7 @@ async function readFileAsync(readDir) {
     console.log(data);
     return data;
   } catch (err) {
-    console.error('Error reading file:', err);
+    console.error("Error reading file:", err);
     throw err;
   }
 }
@@ -129,26 +135,15 @@ async function readFileAsync(readDir) {
 // Main function to aggregate text and choose target AI
 async function main() {
   // Aggregate all text into one variable
+  console.log("Reading code...");
   let allText = readFilesRecursively(baseDir);
-  const input = await readFileAsync('input.txt');
+  console.log("Reading input...");
+  const input = await readFileAsync("input.txt");
   allText += `
     ${input}
     `;
 
-  const choice = "2";
-
-  switch (choice) {
-    case "1":
-      console.log("Sending to Groq AI...");
-      await sendToGroq(allText);
-      break;
-    case "2":
-      console.log("Sending to Ollama...");
-      await sendToOllama(allText);
-      break;
-    default:
-      console.log("Invalid choice. Please enter 1 or 2.");
-  }
+  await sendToOllama(allText);
 }
 
 main();
