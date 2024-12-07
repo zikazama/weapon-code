@@ -7,8 +7,8 @@ const axios = require("axios");
 require("dotenv").config();
 
 // Define the base directory to search for files
-const baseDir = "./../manggis/manggis.services.loyalty/src";
-const outDir = "./response.md";
+const baseDir = process.env.BASE_DIR;
+const outDir = process.env.OUTPUT_DIR;
 
 // Initialize Groq API
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
