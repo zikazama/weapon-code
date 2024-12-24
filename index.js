@@ -76,7 +76,7 @@ const sendToOllama = async (text) => {
       ollamaUrl,
       {
         prompt: text,
-        model: "llama3.2",
+        model: "llama3.2:1b",
       },
       {
         // This option will make the response a stream

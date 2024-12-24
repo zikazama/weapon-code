@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "chat": "node chat.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ngrok:ollama": "ngrok http --url=guided-jaguar-wired.ngrok-free.app 11434"
   },
   "keywords": [],
   "author": "",
